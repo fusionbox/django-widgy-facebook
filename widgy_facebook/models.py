@@ -14,11 +14,15 @@ from widgy.models import Content
 class FacebookPosts(Content):
     editable = True
 
-    target = models.CharField(max_length=255, help_text="Whose posts do you want to show?", default='')
+    target = models.CharField(max_length=255,
+                              help_text="Whose posts do you want to show?", default='')
 
-    count = models.PositiveIntegerField(default=4, help_text="How many posts do you want to show?")
-    app_id = models.CharField(max_length=255, help_text="Found in the Facebook app dashboard.")
-    app_secret = models.CharField(max_length=255, help_text="Found in the same place as the app id.")
+    count = models.PositiveIntegerField(default=4,
+                                        help_text="How many posts do you want to show?")
+    app_id = models.CharField(max_length=255,
+                              help_text="Found in the Facebook app dashboard.")
+    app_secret = models.CharField(max_length=255,
+                                  help_text="Found in the same place as the app id.")
 
     def render(self, context, template=None):
         posts = self.get_posts()
@@ -29,7 +33,8 @@ class FacebookPosts(Content):
         access_token = "{}|{}".format(self.app_id, self.app_secret)
         graph = facebook.GraphAPI(access_token)
         target_obj = graph.get_object(self.target)
-        first_post_page = graph.get_connections(target_obj['id'], 'posts', fields="id, message, picture")
+        first_post_page = graph.get_connections(target_obj['id'], 'posts',
+                                                fields="id, message, picture")
         return list(islice(self.post_gen(first_post_page), self.count))
 
     def post_gen(self, posts):
