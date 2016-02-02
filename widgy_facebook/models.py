@@ -30,7 +30,7 @@ class FacebookPosts(Content):
         with context.push({'posts': posts}):
             return super(FacebookPosts, self).render(context, template)
 
-    @cached(lambda u, m=None, c=None: [str(u), str(m), str(c)], timeout=datetime.timedelta(minutes=60))
+    @cached(lambda self: [self.target, self.count], timeout=datetime.timedelta(minutes=60))
     def get_posts(self):
         access_token = "{}|{}".format(self.app_id, self.app_secret)
         graph = facebook.GraphAPI(access_token)
