@@ -1,3 +1,4 @@
+import logging
 from itertools import islice
 import datetime
 
@@ -10,6 +11,8 @@ from fusionbox.decorators import cached
 
 import widgy
 from widgy.models import Content
+
+logger = logging.getLogger(__name__)
 
 @widgy.register
 class FacebookPosts(Content):
@@ -26,7 +29,12 @@ class FacebookPosts(Content):
                                   help_text="Found in the same place as the app id.")
 
     def render(self, context, template=None):
-        posts = self.get_posts()
+        try:
+            posts = self.get_posts()
+        except Exception as e:
+            logger.exception('Error getting facebook posts')
+            posts = []
+
         with context.push({'posts': posts}):
             return super(FacebookPosts, self).render(context, template)
 
